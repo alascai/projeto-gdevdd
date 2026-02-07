@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulado - Grupo de Estudos</title>
     
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.png" type="image/png">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -391,7 +391,6 @@
     </div>
 
     <script>
-        // --- URL DA MACRO ATUALIZADA ---
         const MACRO_URL = "https://script.google.com/macros/s/AKfycbz0Dr9rU8Bno2lTWoIMIMSrwDHxQ5cnJqq58MUMlgzK7WgHrnGVMatYpmDOkbC8aGs3aw/exec";
         
         let questions = []; 
@@ -446,7 +445,6 @@
                 
                 const rawData = await response.json();
 
-                // Mapeia conforme as chaves exatas do seu Code.gs (Pergunta e Categoria)
                 const allQuestions = rawData.map(item => ({
                     text: item.Pergunta || "Questão sem texto",
                     cat: (item.Categoria || "").toString().toUpperCase().trim()
@@ -456,10 +454,8 @@
                 const cpm = allQuestions.filter(q => q.cat.includes('CPM'));
                 const pce = allQuestions.filter(q => q.cat.includes('PCE'));
 
-                // Tenta pegar 4 CCM, 4 CPM e 2 PCE
                 let combined = [...getRandom(ccm, 4), ...getRandom(cpm, 4), ...getRandom(pce, 2)];
                 
-                // Se o sorteio por categoria falhar por falta de itens, pega 10 aleatórias gerais
                 if (combined.length < 10) {
                     combined = getRandom(allQuestions, 10);
                 }
@@ -526,7 +522,6 @@
 
         function nextQuestion() {
             const val = document.getElementById('answer-input').value;
-            // Salva a resposta no objeto para ser enviada ao final
             state.answers[`Q${state.currentQuestionIndex+1}`] = { 
                 r: val 
             };
