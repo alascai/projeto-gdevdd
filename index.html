@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulado - Grupo de Estudos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-cobalt: #0047AB;
+            --dark-cobalt: #002E63;
+            --neon-blue: #2E67F8;
+            --bg-dark: #020b1c;
+            --text-main: #ffffff;
+            --text-secondary: #a0aab5;
+            --danger: #ff4444;
+            --glass-bg: rgba(10, 25, 50, 0.9);
+            --glass-border: rgba(65, 105, 225, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 50% 0%, #0a2463 0%, var(--bg-dark) 80%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 500px;
+            perspective: 1000px;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 
+                        0 0 20px rgba(0, 71, 171, 0.2);
+            transition: transform 0.4s ease, opacity 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-content {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .emblem {
+            width: 60px;
+            height: auto;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 10px rgba(46, 103, 248, 0.5));
+        }
+
+        h1 { font-size: 20px; font-weight: 700; color: white; letter-spacing: -0.5px; }
+
+        h2 { font-size: 12px; font-weight: 400; color: var(--neon-blue); text-transform: uppercase; letter-spacing: 2px; margin-top: 5px; }
+
+        .form-group {
+            margin-bottom: 25px; /* Aumentado de 15px para 25px para dar mais espaço */
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #1e3a8a;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        textarea {
+            resize: none;
+            height: 100px;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(46, 103, 248, 0.2);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(90deg, var(--primary-cobalt) 0%, var(--neon-blue) 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 71, 171, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: #1e293b;
+            color: #64748b;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .rules-list {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .rules-list li {
+            list-style: none;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            padding-left: 15px;
+            position: relative;
+            line-height: 1.4;
+        }
+
+        .rules-list li::before {
+            content: "•";
+            color: var(--neon-blue);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-container input {
+            accent-color: var(--neon-blue);
+            width: 16px;
+            height: 16px;
+        }
+
+        .checkbox-text {
+            font-size: 12px;
+            color: var(--text-main);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #1e293b;
+            border-radius: 2px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--neon-blue);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .step-indicator {
+            position: absolute;
+            top: -18px;
+            right: 0;
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .timer-badge {
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid rgba(255, 68, 68, 0.3);
+            color: var(--danger);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .question-text {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 10px;
+            color: #475569;
+            text-align: center;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fail-icon {
+            font-size: 40px;
+            color: var(--danger);
+            margin-bottom: 15px;
+        }
+        
+        .success-icon {
+            font-size: 40px;
+            color: #00ff88;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="card">
+            
+            <div class="header-content">
+                <img src="https://i.imgur.com/AlxGD17.png" alt="Brasão" class="emblem">
+                <h1>Grupo de Estudos</h1>
+                <h2>Curso de Formação de Oficiais</h2>
+            </div>
+
+            <div id="screen-login" class="screen active">
+                <div class="progress-bar"><div class="progress-fill" style="width: 10%;"></div><span class="step-indicator">Passo 1 de 3</span></div>
+                
+                <p style="text-align: center; font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">
+                    Bem-vindo. Identifique-se para iniciar.
+                </p>
+
+                <div class="form-group">
+                    <label>Seu Nickname:</label>
+                    <input type="text" id="nickname-input" placeholder="Digite seu nick...">
+                </div>
+
+                <button class="btn-primary" onclick="goToRules()">
+                    Avançar <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div id="screen-rules" class="screen">
+                <div class="progress-bar"><div class="progress-fill" style="width: 33%;"></div><span class="step-indicator">Passo 2 de 3</span></div>
+                
+                <h3 style="margin-bottom: 15px; font-size: 15px;">Regras de Conduta</h3>
+                
+                <ul class="rules-list">
+                    <li>Isso é um simulado. Caso seja reprovado, não te impedirá de realizar a prova oficial.</li>
+                    <li><strong>Atenção:</strong> Ao clicar fora do site (trocar de aba), você será automaticamente reprovado.</li>
+                    <li>Você tem <strong>2 minutos</strong> para responder cada questão.</li>
+                    <li>Você tem direito a errar duas questões. Caso erre três, será reprovado.</li>
+                    <li>Ao final da prova, avise o avaliador que terminou para correção.</li>
+                </ul>
+
+                <label class="checkbox-container">
+                    <input type="checkbox" id="rules-check" onchange="toggleStartButton()">
+                    <span class="checkbox-text">Estou ciente das regras e pronto para iniciar.</span>
+                </label>
+
+                <div id="loading-msg" style="display:none; text-align:center; color: var(--neon-blue); font-size: 12px; margin-bottom: 10px;">
+                    <i class="fas fa-spinner fa-spin"></i> Carregando prova do banco de dados...
+                </div>
+                <div id="error-msg" style="display:none; text-align:center; color: #ffaa00; font-size: 11px; margin-bottom: 10px;">
+                    (Falha na conexão com a planilha)
+                </div>
+
+                <button class="btn-primary" id="btn-start" disabled onclick="startQuiz()">
+                    INICIAR PROVA <i class="fas fa-play"></i>
+                </button>
+            </div>
+
+            <div id="screen-quiz" class="screen">
+                <div class="quiz-header">
+                     <div class="timer-badge">
+                        <i class="fas fa-clock"></i> <span id="timer-display">02:00</span>
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="quiz-progress" style="width: 0%;"></div>
+                    <span class="step-indicator" id="question-count">Questão 1</span>
+                </div>
+
+                <div id="question-container"></div>
+
+                <button class="btn-primary" style="margin-top: 15px;" onclick="nextQuestion()">
+                    Enviar Resposta <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+
+            <div id="screen-fail" class="screen">
+                <div style="text-align: center;">
+                    <i class="fas fa-skull-crossbones fail-icon"></i>
+                    <h1 style="color: var(--danger); margin-bottom: 10px; font-size: 22px;">REPROVADO</h1>
+                    <p id="fail-reason" style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">
+                        Motivo desconhecido.
+                    </p>
+                    <div style="background: rgba(255,0,0,0.1); padding: 10px; border-radius: 8px; font-size: 12px; border: 1px solid rgba(255,0,0,0.2);">
+                        Avise seu avaliador. Feche a prova.
+                    </div>
+                </div>
+            </div>
+
+            <div id="screen-success" class="screen">
+                <div style="text-align: center;">
+                    <i class="fas fa-check-circle success-icon"></i>
+                    <h1 style="color: #fff; margin-bottom: 10px; font-size: 22px;">Prova Finalizada!</h1>
+                    <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">
+                        Você completou todas as etapas.
+                    </p>
+                    <div style="background: rgba(0,255,136,0.1); padding: 15px; border-radius: 8px; font-size: 12px; border: 1px solid rgba(0,255,136,0.2);">
+                        <strong>Atenção:</strong> Avise seu avaliador agora para que ele possa corrigir suas respostas.
+                    </div>
+                    <button class="btn-primary" style="margin-top: 20px;" onclick="location.reload()">
+                        Voltar ao Início
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            Desenvolvido para Grupo de Estudos - CFO © 2026<br>
+            Todos os direitos reservados.<br>
+            <span style="opacity: 0.7; font-size: 9px;">&lt;/&gt; por Kaissi</span>
+        </div>
+    </div>
+
+    <script>
+        const MACRO_URL = "https://script.google.com/macros/s/AKfycbz0Dr9rU8Bno2lTWoIMIMSrwDHxQ5cnJqq58MUMlgzK7WgHrnGVMatYpmDOkbC8aGs3aw/exec";
+        
+        let questions = []; 
+        let state = {
+            nickname: '',
+            currentQuestionIndex: 0,
+            errors: 0,
+            timer: 120,
+            timerInterval: null,
+            quizActive: false,
+            answers: {}, 
+            questionsLoaded: false
+        };
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function goToRules() {
+            const nick = document.getElementById('nickname-input').value;
+            if (!nick || nick.length < 3) {
+                alert("Por favor, insira um Nickname válido.");
+                return;
+            }
+            state.nickname = nick;
+            showScreen('screen-rules');
+            fetchQuestions();
+        }
+
+        function toggleStartButton() {
+            const check = document.getElementById('rules-check');
+            const btn = document.getElementById('btn-start');
+            if (check.checked && state.questionsLoaded) {
+                btn.disabled = false;
+                btn.innerHTML = 'INICIAR PROVA <i class="fas fa-play"></i>';
+            } else if (check.checked && !state.questionsLoaded) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Aguarde...';
+                document.getElementById('loading-msg').style.display = 'block';
+            } else {
+                btn.disabled = true;
+            }
+        }
+
+        async function fetchQuestions() {
+            try {
+                document.getElementById('loading-msg').style.display = 'block';
+                const response = await fetch(`${MACRO_URL}?action=getQuestions`);
+                
+                if (!response.ok) throw new Error('Erro na rede: ' + response.status);
+                
+                const rawData = await response.json();
+                console.log("Dados recebidos da Macro:", rawData);
+
+                const allQuestions = rawData.map(item => ({
+                    text: item.Pergunta || "Questão sem texto",
+                    cat: (item.Categoria || "").toString().toUpperCase().trim()
+                }));
+
+                const ccm = allQuestions.filter(q => q.cat.includes('CCM'));
+                const cpm = allQuestions.filter(q => q.cat.includes('CPM'));
+                const pce = allQuestions.filter(q => q.cat.includes('PCE'));
+
+                let combined = [...getRandom(ccm, 4), ...getRandom(cpm, 4), ...getRandom(pce, 2)];
+                
+                if (combined.length < 10) {
+                    combined = getRandom(allQuestions, 10);
+                }
+
+                if (combined.length === 0) throw new Error("Nenhuma questão válida encontrada.");
+
+                questions = combined;
+                state.questionsLoaded = true;
+                document.getElementById('loading-msg').style.display = 'none';
+                if (document.getElementById('rules-check').checked) toggleStartButton();
+                
+            } catch (error) {
+                console.error("Erro crítico ao carregar questões:", error);
+                document.getElementById('error-msg').innerText = "(Erro: " + error.message + ")";
+                document.getElementById('error-msg').style.display = 'block';
+                state.questionsLoaded = false;
+                toggleStartButton();
+            }
+        }
+
+        function getRandom(arr, n) {
+            if (!arr.length) return [];
+            return [...arr].sort(() => 0.5 - Math.random()).slice(0, n);
+        }
+
+        async function saveToGoogleSheets(status, reason = "") {
+            const payload = {
+                action: 'saveAnswers',
+                nickname: state.nickname,
+                status: status,
+                reason: reason,
+                answers: JSON.stringify(state.answers) 
+            };
+            try {
+                await fetch(MACRO_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', 
+                    body: JSON.stringify(payload)
+                });
+            } catch (e) { console.error("Erro ao salvar:", e); }
+        }
+
+        function startQuiz() {
+            state.quizActive = true;
+            showScreen('screen-quiz');
+            loadQuestion();
+            startAntiCheat();
+        }
+
+        function loadQuestion() {
+            if (state.currentQuestionIndex >= questions.length) {
+                finishQuiz();
+                return;
+            }
+            const q = questions[state.currentQuestionIndex];
+            document.getElementById('question-container').innerHTML = `
+                <p class="question-text"><strong>${state.currentQuestionIndex + 1})</strong> ${q.text}</p>
+                <textarea id="answer-input" placeholder="Digite sua resposta..."></textarea>
+            `;
+            document.getElementById('quiz-progress').style.width = `${((state.currentQuestionIndex)/questions.length)*100}%`;
+            document.getElementById('question-count').innerText = `Questão ${state.currentQuestionIndex + 1} de ${questions.length}`;
+            resetTimer();
+        }
+
+        function nextQuestion() {
+            const val = document.getElementById('answer-input').value;
+            state.answers[`Q${state.currentQuestionIndex+1}`] = { 
+                r: val 
+            };
+            state.currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function finishQuiz() {
+            state.quizActive = false;
+            stopTimer();
+            showScreen('screen-success');
+            saveToGoogleSheets("Aprovado", "Conclusão");
+        }
+
+        function failExam(reason) {
+            state.quizActive = false;
+            stopTimer();
+            document.getElementById('fail-reason').innerText = reason;
+            showScreen('screen-fail');
+            saveToGoogleSheets("Reprovado", reason);
+        }
+
+        function resetTimer() {
+            stopTimer();
+            state.timer = 120;
+            updateTimerDisplay();
+            state.timerInterval = setInterval(() => {
+                state.timer--;
+                updateTimerDisplay();
+                if (state.timer <= 0) {
+                    state.errors++;
+                    if (state.errors >= 3) failExam("Limite de tempo excedido 3 vezes.");
+                    else {
+                        alert("Tempo esgotado nesta questão!");
+                        nextQuestion();
+                    }
+                }
+            }, 1000);
+        }
+
+        function stopTimer() { clearInterval(state.timerInterval); }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(state.timer/60).toString().padStart(2,'0');
+            const s = (state.timer%60).toString().padStart(2,'0');
+            const el = document.getElementById('timer-display');
+            if(el) {
+                el.innerText = `${m}:${s}`;
+                el.style.color = state.timer < 10 ? '#ff4444' : 'inherit';
+            }
+        }
+
+        function startAntiCheat() {
+            window.addEventListener('blur', () => {
+                if (state.quizActive) failExam("Saída de aba detectada.");
+            });
+        }
+    </script>
+</body>
+</html>
