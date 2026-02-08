@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulado - Grupo de Estudos</title>
+    <title>Simulado - Grupo de Estudos CFO</title>
     
     <link rel="icon" href="favicon.png" type="image/png">
     
@@ -15,7 +15,6 @@
     <style>
         :root {
             --primary-cobalt: #0047AB;
-            --dark-cobalt: #002E63;
             --neon-blue: #2E67F8;
             --bg-dark: #020b1c;
             --text-main: #ffffff;
@@ -288,16 +287,13 @@
 
             <div id="screen-login" class="screen active">
                 <div class="progress-bar"><div class="progress-fill" style="width: 10%;"></div><span class="step-indicator">Passo 1 de 3</span></div>
-                
                 <p style="text-align: center; font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">
                     Bem-vindo. Identifique-se para iniciar.
                 </p>
-
                 <div class="form-group">
                     <label>Seu Nickname:</label>
                     <input type="text" id="nickname-input" placeholder="Digite seu nick...">
                 </div>
-
                 <button class="btn-primary" onclick="goToRules()">
                     Avançar <i class="fas fa-arrow-right"></i>
                 </button>
@@ -305,9 +301,7 @@
 
             <div id="screen-rules" class="screen">
                 <div class="progress-bar"><div class="progress-fill" style="width: 33%;"></div><span class="step-indicator">Passo 2 de 3</span></div>
-                
                 <h3 style="margin-bottom: 15px; font-size: 15px;">Regras de Conduta</h3>
-                
                 <ul class="rules-list">
                     <li>Isso é um simulado. Caso seja reprovado, não te impedirá de realizar a prova oficial.</li>
                     <li><strong>Atenção:</strong> Ao clicar fora do site (trocar de aba), você será automaticamente reprovado.</li>
@@ -315,19 +309,13 @@
                     <li>Você tem direito a errar duas questões. Caso erre três, será reprovado.</li>
                     <li>Ao final da prova, avise o avaliador que terminou para correção.</li>
                 </ul>
-
                 <label class="checkbox-container">
-                    <input type="checkbox" id="rules-check" onchange="toggleStartButton()">
+                    <input type="checkbox" id="rules-check" onchange="toggleStartBtn()">
                     <span class="checkbox-text">Estou ciente das regras e pronto para iniciar.</span>
                 </label>
-
                 <div id="loading-msg" style="display:none; text-align:center; color: var(--neon-blue); font-size: 12px; margin-bottom: 10px;">
                     <i class="fas fa-spinner fa-spin"></i> Carregando prova do banco de dados...
                 </div>
-                <div id="error-msg" style="display:none; text-align:center; color: #ffaa00; font-size: 11px; margin-bottom: 10px;">
-                    (Falha na conexão com a planilha)
-                </div>
-
                 <button class="btn-primary" id="btn-start" disabled onclick="startQuiz()">
                     INICIAR PROVA <i class="fas fa-play"></i>
                 </button>
@@ -339,14 +327,11 @@
                         <i class="fas fa-clock"></i> <span id="timer-display">02:00</span>
                     </div>
                 </div>
-
                 <div class="progress-bar">
-                    <div class="progress-fill" id="quiz-progress" style="width: 0%;"></div>
-                    <span class="step-indicator" id="question-count">Questão 1</span>
+                    <div class="progress-fill" id="quiz-progress"></div>
+                    <span class="step-indicator" id="question-count"></span>
                 </div>
-
                 <div id="question-container"></div>
-
                 <button class="btn-primary" style="margin-top: 15px;" onclick="nextQuestion()">
                     Enviar Resposta <i class="fas fa-paper-plane"></i>
                 </button>
@@ -356,11 +341,9 @@
                 <div style="text-align: center;">
                     <i class="fas fa-skull-crossbones fail-icon"></i>
                     <h1 style="color: var(--danger); margin-bottom: 10px; font-size: 22px;">REPROVADO</h1>
-                    <p id="fail-reason" style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">
-                        Motivo desconhecido.
-                    </p>
+                    <p id="fail-reason" style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;"></p>
                     <div style="background: rgba(255,0,0,0.1); padding: 10px; border-radius: 8px; font-size: 12px; border: 1px solid rgba(255,0,0,0.2);">
-                        Avise seu avaliador. Feche a prova.
+                        Avise seu avaliador. O veredito foi registrado.
                     </div>
                 </div>
             </div>
@@ -369,15 +352,11 @@
                 <div style="text-align: center;">
                     <i class="fas fa-check-circle success-icon"></i>
                     <h1 style="color: #fff; margin-bottom: 10px; font-size: 22px;">Prova Finalizada!</h1>
-                    <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">
-                        Você completou todas as etapas.
-                    </p>
+                    <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">Você completou todas as etapas.</p>
                     <div style="background: rgba(0,255,136,0.1); padding: 15px; border-radius: 8px; font-size: 12px; border: 1px solid rgba(0,255,136,0.2);">
-                        <strong>Atenção:</strong> Avise seu avaliador agora para que ele possa corrigir suas respostas.
+                        <strong>Atenção:</strong> Avise seu avaliador agora para a correção manual.
                     </div>
-                    <button class="btn-primary" style="margin-top: 20px;" onclick="location.reload()">
-                        Voltar ao Início
-                    </button>
+                    <button class="btn-primary" style="margin-top: 20px;" onclick="location.reload()">Voltar ao Início</button>
                 </div>
             </div>
 
@@ -385,23 +364,23 @@
 
         <div class="footer">
             Desenvolvido para Grupo de Estudos - CFO © 2026<br>
-            Todos os direitos reservados.<br>
-            <span style="opacity: 0.7; font-size: 9px;">&lt;/&gt; por Kaissi</span>
+            <span style="opacity: 0.7;">&lt;/&gt; por Kaissi</span>
         </div>
     </div>
 
     <script>
-        const MACRO_URL = "https://script.google.com/macros/s/AKfycbwpPgl5tvRMNj7Y_6ajORWVOsNSG8tOp968fpRpbjmh4QYEEkdKBLbHoZEhWj4m7RaUgw/exec";
+        const MACRO_URL = "https://script.google.com/macros/s/AKfycbyB7FASpSt_AJS0L5kDorU5Hu3hV4gUOmTtmpkHde7gxsUQDDAjdU0AlQBi5-Egp_dMhA/exec;
         
         let questions = []; 
         let state = {
             nickname: '',
             currentQuestionIndex: 0,
-            errors: 0,
+            timeOuts: 0,
             timer: 120,
             timerInterval: null,
             quizActive: false,
-            answers: {}, 
+            answers: {},
+            sent: false,
             questionsLoaded: false
         };
 
@@ -411,54 +390,36 @@
         }
 
         function goToRules() {
-            const nick = document.getElementById('nickname-input').value;
-            if (!nick || nick.length < 3) {
-                alert("Por favor, insira um Nickname válido.");
-                return;
-            }
+            const nick = document.getElementById('nickname-input').value.trim();
+            if (nick.length < 3) return alert("Nickname muito curto.");
             state.nickname = nick;
             showScreen('screen-rules');
             fetchQuestions();
         }
 
-        function toggleStartButton() {
-            const check = document.getElementById('rules-check');
-            const btn = document.getElementById('btn-start');
-            if (check.checked && state.questionsLoaded) {
-                btn.disabled = false;
-                btn.innerHTML = 'INICIAR PROVA <i class="fas fa-play"></i>';
-            } else if (check.checked && !state.questionsLoaded) {
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Aguarde...';
-                document.getElementById('loading-msg').style.display = 'block';
-            } else {
-                btn.disabled = true;
-            }
+        function toggleStartBtn() {
+            const check = document.getElementById('rules-check').checked;
+            document.getElementById('btn-start').disabled = !(check && state.questionsLoaded);
         }
 
         async function fetchQuestions() {
+            document.getElementById('loading-msg').style.display = 'block';
             try {
-                document.getElementById('loading-msg').style.display = 'block';
-                const response = await fetch(`${MACRO_URL}?action=getQuestions`);
-                if (!response.ok) throw new Error('Erro na rede: ' + response.status);
-                const rawData = await response.json();
-                const allQuestions = rawData.map(item => ({
-                    text: item.Pergunta || "Questão sem texto",
-                    cat: (item.Categoria || "").toString().toUpperCase().trim()
-                }));
-                const ccm = allQuestions.filter(q => q.cat.includes('CCM'));
-                const cpm = allQuestions.filter(q => q.cat.includes('CPM'));
-                const pce = allQuestions.filter(q => q.cat.includes('PCE'));
-                let combined = [...getRandom(ccm, 4), ...getRandom(cpm, 4), ...getRandom(pce, 2)];
-                if (combined.length < 10) combined = getRandom(allQuestions, 10);
-                if (combined.length === 0) throw new Error("Nenhuma questão válida.");
-                questions = combined;
+                const resp = await fetch(`${MACRO_URL}?action=getQuestions`);
+                const data = await resp.json();
+                
+                const ccm = data.filter(q => String(q.Categoria).toUpperCase().includes('CCM'));
+                const cpm = data.filter(q => String(q.Categoria).toUpperCase().includes('CPM'));
+                const pce = data.filter(q => String(q.Categoria).toUpperCase().includes('PCE'));
+
+                questions = [...getRandom(ccm, 4), ...getRandom(cpm, 4), ...getRandom(pce, 2)];
+                if (questions.length < 10) questions = getRandom(data, 10);
+
                 state.questionsLoaded = true;
                 document.getElementById('loading-msg').style.display = 'none';
-                if (document.getElementById('rules-check').checked) toggleStartButton();
-            } catch (error) {
-                document.getElementById('error-msg').style.display = 'block';
-                state.questionsLoaded = false;
+                toggleStartBtn();
+            } catch (e) {
+                alert("Falha ao conectar com o banco de questões.");
             }
         }
 
@@ -466,108 +427,102 @@
             return [...arr].sort(() => 0.5 - Math.random()).slice(0, n);
         }
 
-        // --- FUNÇÃO DE SALVAMENTO CORRIGIDA ---
-        async function saveToGoogleSheets(status, reason = "") {
-            const payload = {
-                action: 'saveAnswers',
-                nickname: state.nickname,
-                statusAuto: (reason === "Saída de aba detectada.") ? "Reprovado" : "",
-                answers: state.answers 
-            };
-
-            // Se for reprovação por cheat, usa sendBeacon para garantir o envio no "blur"
-            if (payload.statusAuto === "Reprovado") {
-                const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
-                navigator.sendBeacon(MACRO_URL, blob);
-            } else {
-                // Para conclusão normal, usa fetch padrão
-                try {
-                    await fetch(MACRO_URL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        body: JSON.stringify(payload)
-                    });
-                } catch (e) { console.error("Erro ao salvar:", e); }
-            }
-        }
-
         function startQuiz() {
             state.quizActive = true;
             showScreen('screen-quiz');
             loadQuestion();
-            startAntiCheat();
+            
+            window.addEventListener('blur', () => {
+                if (state.quizActive && !state.sent) {
+                    failExam("Saída de aba detectada durante a prova.");
+                }
+            });
         }
 
         function loadQuestion() {
-            if (state.currentQuestionIndex >= questions.length) {
-                finishQuiz();
-                return;
-            }
+            if (state.currentQuestionIndex >= questions.length) return finishQuiz();
+
             const q = questions[state.currentQuestionIndex];
+            document.getElementById('question-count').innerText = `Questão ${state.currentQuestionIndex + 1} de ${questions.length}`;
+            document.getElementById('quiz-progress').style.width = `${(state.currentQuestionIndex / questions.length) * 100}%`;
+            
             document.getElementById('question-container').innerHTML = `
-                <p class="question-text"><strong>${state.currentQuestionIndex + 1})</strong> ${q.text}</p>
+                <div style="text-align: left;">
+                    <span style="background: var(--neon-blue); font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: bold;">${q.Categoria || 'GERAL'}</span>
+                    <p class="question-text"><strong>${state.currentQuestionIndex + 1})</strong> ${q.Pergunta}</p>
+                </div>
                 <textarea id="answer-input" placeholder="Digite sua resposta..."></textarea>
             `;
-            document.getElementById('quiz-progress').style.width = `${((state.currentQuestionIndex)/questions.length)*100}%`;
-            document.getElementById('question-count').innerText = `Questão ${state.currentQuestionIndex + 1} de ${questions.length}`;
             resetTimer();
         }
 
         function nextQuestion() {
-            const val = document.getElementById('answer-input').value;
-            const perguntaAtualTexto = questions[state.currentQuestionIndex].text;
-            state.answers[`P${state.currentQuestionIndex+1}`] = { r: val, p: perguntaAtualTexto };
+            const val = document.getElementById('answer-input').value.trim();
+            if (!val && state.timer > 0) return alert("Por favor, responda a questão.");
+
+            const qText = questions[state.currentQuestionIndex].Pergunta;
+            state.answers[`P${state.currentQuestionIndex + 1}`] = { p: qText, r: val || "(Tempo esgotado)" };
+            
             state.currentQuestionIndex++;
             loadQuestion();
         }
 
-        function finishQuiz() {
-            state.quizActive = false;
-            stopTimer();
-            showScreen('screen-success');
-            saveToGoogleSheets("Aprovado", "Conclusão");
-        }
-
-        function failExam(reason) {
-            if (!state.quizActive) return; // Evita disparos duplicados
-            state.quizActive = false;
-            stopTimer();
-            document.getElementById('fail-reason').innerText = reason;
-            saveToGoogleSheets("Reprovado", reason);
-            showScreen('screen-fail');
-        }
-
         function resetTimer() {
-            stopTimer();
+            clearInterval(state.timerInterval);
             state.timer = 120;
             updateTimerDisplay();
             state.timerInterval = setInterval(() => {
                 state.timer--;
                 updateTimerDisplay();
                 if (state.timer <= 0) {
-                    state.errors++;
-                    if (state.errors >= 3) failExam("Limite de tempo excedido.");
+                    state.timeOuts++;
+                    if (state.timeOuts >= 3) failExam("Limite de tempo excedido.");
                     else nextQuestion();
                 }
             }, 1000);
         }
 
-        function stopTimer() { clearInterval(state.timerInterval); }
-
         function updateTimerDisplay() {
-            const m = Math.floor(state.timer/60).toString().padStart(2,'0');
-            const s = (state.timer%60).toString().padStart(2,'0');
-            const el = document.getElementById('timer-display');
-            if(el) el.innerText = `${m}:${s}`;
+            const m = Math.floor(state.timer / 60).toString().padStart(2, '0');
+            const s = (state.timer % 60).toString().padStart(2, '0');
+            document.getElementById('timer-display').innerText = `${m}:${s}`;
         }
 
-        function startAntiCheat() {
-            // "blur" dispara quando o usuário troca de aba ou janela
-            window.addEventListener('blur', () => {
-                if (state.quizActive) {
-                    failExam("Saída de aba detectada.");
-                }
-            });
+        async function sendFinalData(status, motivo = "") {
+            if (state.sent) return;
+            state.sent = true;
+
+            const payload = {
+                action: 'saveAnswers',
+                nickname: state.nickname,
+                statusAuto: status, 
+                motivoReprovacao: motivo,
+                answers: state.answers
+            };
+
+            try {
+                await fetch(MACRO_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    body: JSON.stringify(payload)
+                });
+            } catch (e) { console.error("Erro no envio:", e); }
+        }
+
+        function finishQuiz() {
+            state.quizActive = false;
+            clearInterval(state.timerInterval);
+            showScreen('screen-success');
+            sendFinalData(""); 
+        }
+
+        function failExam(reason) {
+            state.quizActive = false;
+            clearInterval(state.timerInterval);
+            document.getElementById('fail-reason').innerText = reason;
+            showScreen('screen-fail');
+            sendFinalData("Reprovado", reason);
         }
     </script>
 </body>
