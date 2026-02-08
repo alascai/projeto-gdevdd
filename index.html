@@ -391,8 +391,7 @@
     </div>
 
     <script>
-        // --- LINK ATUALIZADO ---
-        const MACRO_URL = "https://script.google.com/macros/s/AKfycbyp9GuXojsRfkvwJbbPVxUN77J2QD9-YBpmumdIO15ThXC-WBXoFYjrU_BzOShjEtEq/exec";
+        const MACRO_URL = "https://script.google.com/macros/s/AKfycbwpPgl5tvRMNj7Y_6ajORWVOsNSG8tOp968fpRpbjmh4QYEEkdKBLbHoZEhWj4m7RaUgw/exec";
         
         let questions = []; 
         let state = {
@@ -467,22 +466,21 @@
             return [...arr].sort(() => 0.5 - Math.random()).slice(0, n);
         }
 
-        // --- FUNÇÃO DE SALVAMENTO BLINDADA ---
+        // --- FUNÇÃO DE SALVAMENTO CORRIGIDA ---
         async function saveToGoogleSheets(status, reason = "") {
             const payload = {
                 action: 'saveAnswers',
                 nickname: state.nickname,
-                // "Reprovado" via statusAuto aciona a coluna O no backend
                 statusAuto: (reason === "Saída de aba detectada.") ? "Reprovado" : "",
                 answers: state.answers 
             };
 
-            // Se for reprovação por cheat, usa sendBeacon para garantir o envio no fechamento/mudança de aba
+            // Se for reprovação por cheat, usa sendBeacon para garantir o envio no "blur"
             if (payload.statusAuto === "Reprovado") {
                 const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
                 navigator.sendBeacon(MACRO_URL, blob);
             } else {
-                // Para conclusão normal ou erros de tempo
+                // Para conclusão normal, usa fetch padrão
                 try {
                     await fetch(MACRO_URL, {
                         method: 'POST',
@@ -531,7 +529,7 @@
         }
 
         function failExam(reason) {
-            if (!state.quizActive) return; 
+            if (!state.quizActive) return; // Evita disparos duplicados
             state.quizActive = false;
             stopTimer();
             document.getElementById('fail-reason').innerText = reason;
