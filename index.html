@@ -391,7 +391,6 @@
     </div>
 
     <script>
-        // --- LINK ATUALIZADO AQUI ---
         const MACRO_URL = "https://script.google.com/macros/s/AKfycbxNaBePfiSyrJRhbWQNxKndp1Sdix485hRHqUhqLY1QtFZq57qopnE4U7yzhCp8YkuKMA/exec";
         
         let questions = []; 
@@ -441,62 +440,55 @@
             try {
                 document.getElementById('loading-msg').style.display = 'block';
                 const response = await fetch(`${MACRO_URL}?action=getQuestions`);
-                
                 if (!response.ok) throw new Error('Erro na rede: ' + response.status);
-                
                 const rawData = await response.json();
-
                 const allQuestions = rawData.map(item => ({
                     text: item.Pergunta || "Questão sem texto",
                     cat: (item.Categoria || "").toString().toUpperCase().trim()
                 }));
-
                 const ccm = allQuestions.filter(q => q.cat.includes('CCM'));
                 const cpm = allQuestions.filter(q => q.cat.includes('CPM'));
                 const pce = allQuestions.filter(q => q.cat.includes('PCE'));
-
                 let combined = [...getRandom(ccm, 4), ...getRandom(cpm, 4), ...getRandom(pce, 2)];
-                
-                if (combined.length < 10) {
-                    combined = getRandom(allQuestions, 10);
-                }
-
-                if (combined.length === 0) throw new Error("Nenhuma questão válida encontrada no banco.");
-
+                if (combined.length < 10) combined = getRandom(allQuestions, 10);
+                if (combined.length === 0) throw new Error("Nenhuma questão válida.");
                 questions = combined;
                 state.questionsLoaded = true;
                 document.getElementById('loading-msg').style.display = 'none';
                 if (document.getElementById('rules-check').checked) toggleStartButton();
-                
             } catch (error) {
-                console.error("Erro ao carregar questões:", error);
-                document.getElementById('error-msg').innerText = "(Erro: " + error.message + ")";
                 document.getElementById('error-msg').style.display = 'block';
                 state.questionsLoaded = false;
-                toggleStartButton();
             }
         }
 
         function getRandom(arr, n) {
-            if (!arr.length) return [];
             return [...arr].sort(() => 0.5 - Math.random()).slice(0, n);
         }
 
+        // --- FUNÇÃO DE SALVAMENTO CORRIGIDA ---
         async function saveToGoogleSheets(status, reason = "") {
             const payload = {
                 action: 'saveAnswers',
                 nickname: state.nickname,
-                status: status,
-                reason: reason,
-                answers: JSON.stringify(state.answers) 
+                statusAuto: (reason === "Saída de aba detectada.") ? "Reprovado" : "",
+                answers: state.answers 
             };
-            try {
-                await fetch(MACRO_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', 
-                    body: JSON.stringify(payload)
-                });
-            } catch (e) { console.error("Erro ao salvar:", e); }
+
+            // Se for reprovação por cheat, usa sendBeacon para garantir o envio no "blur"
+            if (payload.statusAuto === "Reprovado") {
+                const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+                navigator.sendBeacon(MACRO_URL, blob);
+            } else {
+                // Para conclusão normal, usa fetch padrão
+                try {
+                    await fetch(MACRO_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        body: JSON.stringify(payload)
+                    });
+                } catch (e) { console.error("Erro ao salvar:", e); }
+            }
         }
 
         function startQuiz() {
@@ -522,19 +514,9 @@
         }
 
         function nextQuestion() {
-            // 1. Pega a resposta do usuário
             const val = document.getElementById('answer-input').value;
-            
-            // 2. Pega o texto da pergunta da memória
             const perguntaAtualTexto = questions[state.currentQuestionIndex].text;
-
-            // 3. Salva usando "P" (para bater com o script) e enviando "r" e "p"
-            state.answers[`P${state.currentQuestionIndex+1}`] = { 
-                r: val,
-                p: perguntaAtualTexto 
-            };
-            
-            // 4. Avança
+            state.answers[`P${state.currentQuestionIndex+1}`] = { r: val, p: perguntaAtualTexto };
             state.currentQuestionIndex++;
             loadQuestion();
         }
@@ -547,11 +529,12 @@
         }
 
         function failExam(reason) {
+            if (!state.quizActive) return; // Evita disparos duplicados
             state.quizActive = false;
             stopTimer();
             document.getElementById('fail-reason').innerText = reason;
-            showScreen('screen-fail');
             saveToGoogleSheets("Reprovado", reason);
+            showScreen('screen-fail');
         }
 
         function resetTimer() {
@@ -563,11 +546,8 @@
                 updateTimerDisplay();
                 if (state.timer <= 0) {
                     state.errors++;
-                    if (state.errors >= 3) failExam("Limite de tempo excedido 3 vezes.");
-                    else {
-                        alert("Tempo esgotado nesta questão!");
-                        nextQuestion();
-                    }
+                    if (state.errors >= 3) failExam("Limite de tempo excedido.");
+                    else nextQuestion();
                 }
             }, 1000);
         }
@@ -578,15 +558,15 @@
             const m = Math.floor(state.timer/60).toString().padStart(2,'0');
             const s = (state.timer%60).toString().padStart(2,'0');
             const el = document.getElementById('timer-display');
-            if(el) {
-                el.innerText = `${m}:${s}`;
-                el.style.color = state.timer < 10 ? '#ff4444' : 'inherit';
-            }
+            if(el) el.innerText = `${m}:${s}`;
         }
 
         function startAntiCheat() {
+            // "blur" dispara quando o usuário troca de aba ou janela
             window.addEventListener('blur', () => {
-                if (state.quizActive) failExam("Saída de aba detectada.");
+                if (state.quizActive) {
+                    failExam("Saída de aba detectada.");
+                }
             });
         }
     </script>
