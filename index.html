@@ -369,7 +369,6 @@
     </div>
 
     <script>
-        // CORRIGIDO: Removida a aspas extra no final da URL
         const MACRO_URL = "https://script.google.com/macros/s/AKfycbx3rOjRrBW1AO5eA4Mjto64Lth9v2Ap3FjDjoeiLYYWOIgrPDAKY8xObtbxZSveWCwD5A/exec";
         
         let questions = []; 
@@ -413,7 +412,6 @@
                 const cpm = data.filter(q => String(q.Categoria).toUpperCase().includes('CPM'));
                 const pce = data.filter(q => String(q.Categoria).toUpperCase().includes('PCE'));
 
-                // Tenta pegar o mix ideal, se não conseguir, pega aleatório
                 questions = [...getRandom(ccm, 4), ...getRandom(cpm, 4), ...getRandom(pce, 2)];
                 if (questions.length < 10) questions = getRandom(data, 10);
 
@@ -449,9 +447,9 @@
             document.getElementById('question-count').innerText = `Questão ${state.currentQuestionIndex + 1} de ${questions.length}`;
             document.getElementById('quiz-progress').style.width = `${(state.currentQuestionIndex / questions.length) * 100}%`;
             
+            // Alterado: Bloco CCM/CPM removido para não aparecer para o aluno
             document.getElementById('question-container').innerHTML = `
                 <div style="text-align: left;">
-                    <span style="background: var(--neon-blue); font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: bold;">${q.Categoria || 'GERAL'}</span>
                     <p class="question-text"><strong>${state.currentQuestionIndex + 1})</strong> ${q.Pergunta}</p>
                 </div>
                 <textarea id="answer-input" placeholder="Digite sua resposta..."></textarea>
@@ -464,7 +462,6 @@
             if (!val && state.timer > 0) return alert("Por favor, responda a questão.");
 
             const qText = questions[state.currentQuestionIndex].Pergunta;
-            // Salva no formato que o backend espera (objeto com p e r)
             state.answers[`P${state.currentQuestionIndex + 1}`] = { p: qText, r: val || "(Tempo esgotado)" };
             
             state.currentQuestionIndex++;
@@ -473,14 +470,13 @@
 
         function resetTimer() {
             clearInterval(state.timerInterval);
-            state.timer = 120; // 2 minutos por questão
+            state.timer = 120;
             updateTimerDisplay();
             state.timerInterval = setInterval(() => {
                 state.timer--;
                 updateTimerDisplay();
                 if (state.timer <= 0) {
                     state.timeOuts++;
-                    // Se estourar o tempo 3 vezes, reprova
                     if (state.timeOuts >= 3) failExam("Limite de tempo excedido.");
                     else nextQuestion();
                 }
@@ -501,11 +497,10 @@
                 action: 'saveAnswers',
                 nickname: state.nickname,
                 statusAuto: status, 
-                answers: state.answers // Já está formatado como {P1: {p: '...', r: '...'}, ...}
+                answers: state.answers
             };
 
             try {
-                // Usando modo cors se possível, ou keepalive para garantir envio
                 await fetch(MACRO_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -518,7 +513,7 @@
             state.quizActive = false;
             clearInterval(state.timerInterval);
             showScreen('screen-success');
-            sendFinalData(""); // Envia com status vazio para ficar como Pendente no Banco
+            sendFinalData(""); 
         }
 
         function failExam(reason) {
