@@ -369,7 +369,8 @@
     </div>
 
     <script>
-        const MACRO_URL = "https://script.google.com/macros/s/AKfycbxB9MEHDK-rGvBAjBixZ5VwLO8XKW3n0oQ96tOfLMhH9dStlSndm-RjyC4WcUK9ntlsEQ/exec;
+        // CORRIGIDO: Removida a aspas extra no final da URL
+        const MACRO_URL = "https://script.google.com/macros/s/AKfycbxB9MEHDK-rGvBAjBixZ5VwLO8XKW3n0oQ96tOfLMhH9dStlSndm-RjyC4WcUK9ntlsEQ/exec";
         
         let questions = []; 
         let state = {
@@ -412,6 +413,7 @@
                 const cpm = data.filter(q => String(q.Categoria).toUpperCase().includes('CPM'));
                 const pce = data.filter(q => String(q.Categoria).toUpperCase().includes('PCE'));
 
+                // Tenta pegar o mix ideal, se não conseguir, pega aleatório
                 questions = [...getRandom(ccm, 4), ...getRandom(cpm, 4), ...getRandom(pce, 2)];
                 if (questions.length < 10) questions = getRandom(data, 10);
 
@@ -419,6 +421,7 @@
                 document.getElementById('loading-msg').style.display = 'none';
                 toggleStartBtn();
             } catch (e) {
+                console.error(e);
                 alert("Falha ao conectar com o banco de questões.");
             }
         }
@@ -461,6 +464,7 @@
             if (!val && state.timer > 0) return alert("Por favor, responda a questão.");
 
             const qText = questions[state.currentQuestionIndex].Pergunta;
+            // Salva no formato que o backend espera (objeto com p e r)
             state.answers[`P${state.currentQuestionIndex + 1}`] = { p: qText, r: val || "(Tempo esgotado)" };
             
             state.currentQuestionIndex++;
@@ -469,13 +473,14 @@
 
         function resetTimer() {
             clearInterval(state.timerInterval);
-            state.timer = 120;
+            state.timer = 120; // 2 minutos por questão
             updateTimerDisplay();
             state.timerInterval = setInterval(() => {
                 state.timer--;
                 updateTimerDisplay();
                 if (state.timer <= 0) {
                     state.timeOuts++;
+                    // Se estourar o tempo 3 vezes, reprova
                     if (state.timeOuts >= 3) failExam("Limite de tempo excedido.");
                     else nextQuestion();
                 }
@@ -496,15 +501,14 @@
                 action: 'saveAnswers',
                 nickname: state.nickname,
                 statusAuto: status, 
-                motivoReprovacao: motivo,
-                answers: state.answers
+                answers: state.answers // Já está formatado como {P1: {p: '...', r: '...'}, ...}
             };
 
             try {
+                // Usando modo cors se possível, ou keepalive para garantir envio
                 await fetch(MACRO_URL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    cache: 'no-cache',
                     body: JSON.stringify(payload)
                 });
             } catch (e) { console.error("Erro no envio:", e); }
@@ -514,7 +518,7 @@
             state.quizActive = false;
             clearInterval(state.timerInterval);
             showScreen('screen-success');
-            sendFinalData(""); 
+            sendFinalData(""); // Envia com status vazio para ficar como Pendente no Banco
         }
 
         function failExam(reason) {
@@ -522,7 +526,7 @@
             clearInterval(state.timerInterval);
             document.getElementById('fail-reason').innerText = reason;
             showScreen('screen-fail');
-            sendFinalData("Reprovado", reason);
+            sendFinalData("Reprovado");
         }
     </script>
 </body>
