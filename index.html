@@ -391,7 +391,8 @@
     </div>
 
     <script>
-        const MACRO_URL = "https://script.google.com/macros/s/AKfycbz0Dr9rU8Bno2lTWoIMIMSrwDHxQ5cnJqq58MUMlgzK7WgHrnGVMatYpmDOkbC8aGs3aw/exec";
+        // --- LINK ATUALIZADO AQUI ---
+        const MACRO_URL = "https://script.google.com/macros/s/AKfycbzrP9cQD-gNWeA0xkz-MOrHwqYwQRdKDHRf9hiN7DwPNqxAOjVyYQObPaZSw-wQIo0wLg/exec";
         
         let questions = []; 
         let state = {
@@ -521,10 +522,19 @@
         }
 
         function nextQuestion() {
+            // 1. Pega a resposta do usuário
             const val = document.getElementById('answer-input').value;
-            state.answers[`Q${state.currentQuestionIndex+1}`] = { 
-                r: val 
+            
+            // 2. Pega o texto da pergunta da memória
+            const perguntaAtualTexto = questions[state.currentQuestionIndex].text;
+
+            // 3. Salva usando "P" (para bater com o script) e enviando "r" e "p"
+            state.answers[`P${state.currentQuestionIndex+1}`] = { 
+                r: val,
+                p: perguntaAtualTexto 
             };
+            
+            // 4. Avança
             state.currentQuestionIndex++;
             loadQuestion();
         }
